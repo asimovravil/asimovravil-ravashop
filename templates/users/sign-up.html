@@ -1,0 +1,39 @@
+{% extends "../base.html" %}
+{% load static %}
+{% load tailwind_filters %}
+{% block title %}Тіркелу{% endblock %}
+
+{% block content %}
+<header class="header">
+    <a href="#" class="logo">RavaShop</a>
+
+    <i class='bx bx-menu' id="menu-icon"></i>
+
+    <nav class="navbar">
+        <a href="{% url 'catalog:homePage' %}">Home</a>
+        <a href="{% url 'catalog:store_home' %}">Category</a>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'users:loginPage' %}">Login</a>
+        <a href="{% url 'users:signUp' %}" class="active">Sign Up</a>
+        {% endif %}
+    </nav>
+</header>
+<style>
+    #hint_id_username, #hint_id_password1, #hint_id_password2 {
+        display: none;
+    }
+</style>
+<div class="container mx-auto">
+    <div class="card w-100 bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title mb-5 ravatitle" style="font-size: 32px;">Registration</h2>
+            <form method="post" class="login-form sign-up-form">
+              {% csrf_token %}
+              {{ form|crispy }}
+                <p class="mb-5 ravap">If you already have an account, <a href="{% url 'users:loginPage' %}" class="link link-primary ravalink">follow this link</a></p>
+              <button class="btn btn-primary ravabtn">Registration</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

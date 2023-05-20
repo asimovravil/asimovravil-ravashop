@@ -1,0 +1,125 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}Тауарлар{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<header class="header">
+    <a href="#" class="logo">RavaShop</a>
+
+    <i class='bx bx-menu' id="menu-icon"></i>
+
+    <nav class="navbar">
+        <a href="{% url 'catalog:homePage' %}">Home</a>
+        <a href="{% url 'catalog:store_home' %}" class="active">Category</a>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'users:loginPage' %}">Login</a>
+        <a href="{% url 'users:signUp' %}">Sign Up</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <a href="{% url 'orders:cart_summary' %}">Cart</a>
+        {% with cart_items=cart|length %}
+        <span class="badge badge-sm indicator-item" id="cart-qty">{{ cart_items }}</span>
+        {% endwith %}
+        {% endif %}
+        {% if user.is_authenticated %}
+        {% if user.is_superuser %}
+        <a href="{% url 'admin:index' %}">Admin panel</a>
+        {% endif %}
+        <a href="{% url 'users:logoutUser' %}">{{ user.username }} : Logout</a>
+        {% endif %}
+    </nav>
+</header>
+<main>
+    <h1 class="titlerava">Products</h1>
+    <div class="ravablock">
+        <div class="ravasearch">
+            <h2 class="ravasearchsearch">Search</h2>
+            <form>
+                <input type="search" name="search" placeholder="Name product.." class="ravainput"/>
+            </form>
+            <h2 class="ravacategorycategory">Category</h2>
+            {% for category in categories %}
+            <a href="{{ category.get_absolute_url }}">
+                <div class="nameproduct">{{ category.name }}</div>
+            </a>
+            {% endfor %}
+        </div>
+        <div class="ravadiv">
+            <div class="ravagay">
+                {% for product in products %}
+                <div class="ravadiv__card">
+                    <img src="{{ product.image.url }}"
+                         alt="" class="card__img">
+                    <h2 class="card__title">{{ product.name }}</h2>
+                    <p>Price: {{ product.price }} tenge</p>
+                    <select id="select-qty-{{product.id}}" class="select">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <button onclick="addToCart('{{product.id}}')" class="btn">Buy</button>
+                    <a href="{{ product.get_absolute_url }}" class="btn">Add to cart</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <header class="header">
+    <a href="#" class="logo">RavaShop</a>
+
+    <i class='bx bx-menu' id="menu-icon"></i>
+
+    <nav class="navbar">
+        <a href="{% url 'catalog:homePage' %}">Home</a>
+        <a href="{% url 'catalog:store_home' %}" class="active">Category</a>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'users:loginPage' %}">Login</a>
+        <a href="{% url 'users:signUp' %}">Sign Up</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <a href="{% url 'orders:cart_summary' %}">Cart</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+        {% if user.is_superuser %}
+        <a href="{% url 'admin:index' %}">Admin panel</a>
+        {% endif %}
+        <a href="{% url 'users:logoutUser' %}">{{ user.username }} : Logout</a>
+        {% endif %}
+    </nav>
+</header>
+    <div class="containerspan">
+        <span class="spansign"><i class='bx bx-error-alt'></i>To view and order products, please login or register.</span>
+    </div>
+</main>
+{% endif %}
+<script>
+        const addToCart = (productId) => {
+        let selectQuantity = document.getElementById('select-qty-' + productId);
+        let quantity = selectQuantity.value;
+
+        let data = {
+            product_id: productId,
+            quantity
+        }
+
+        fetch("{% url 'orders:cart_add' %}", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {  "Content-type": "application/json; charset=UTF-8",
+                        "X-CSRFToken": "{{csrf_token}}"}
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("cart-qty").innerHTML = data.total_items;
+        });
+    };
+
+
+
+
+</script>
+{% endblock %}

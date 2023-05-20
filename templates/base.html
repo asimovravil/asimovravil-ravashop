@@ -1,0 +1,52 @@
+{% load static %}
+<html lang="kz" data-theme="corporate">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static './css/style.css' %}">
+<!--    <link rel="stylesheet" href="{% static './css/bootstrap.min.css' %}">-->
+    <!-- box icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- box icons -->
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+    <script>
+        const addToCart = (productId) => {
+        let selectQuantity = document.getElementById('select-qty-' + productId);
+        let quantity = selectQuantity.value;
+
+        console.log("Se está seleccionando el producto: " + productId + " para añadirlo al carrito con: " + quantity + " unid.");
+
+        let data = {
+            product_id: productId,
+            quantity
+        }
+
+        fetch("{% url 'orders:cart_add' %}", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {  "Content-type": "application/json; charset=UTF-8",
+                        "X-CSRFToken": "{{csrf_token}}"}
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("cart-qty").innerHTML = data.total_items;
+        });
+    }
+
+    </script>
+
+    <!--scroll reveal-->
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+    <!--typed js-->
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+
+    <script src="{% static './js/script.js' %}"></script>
+
+</body>
+</html>

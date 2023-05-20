@@ -1,0 +1,52 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}Басты бет{% endblock %}
+
+{% block content %}
+<header class="header">
+    <a href="#" class="logo">RavaShop</a>
+
+    <i class='bx bx-menu' id="menu-icon"></i>
+
+    <nav class="navbar">
+        <a href="{% url 'catalog:homePage' %}" class="active">Home</a>
+        <a href="{% url 'catalog:store_home' %}">Category</a>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'users:loginPage' %}">Login</a>
+        <a href="{% url 'users:signUp' %}">Sign Up</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <a href="{% url 'orders:cart_summary' %}">Cart</a>
+        {% with cart_items=cart|length %}
+        <span class="badge badge-sm indicator-item" id="cart-qty">{{ cart_items }}</span>
+        {% endwith %}
+        {% endif %}
+        {% if user.is_authenticated %}
+        {% if user.is_superuser %}
+        <a href="{% url 'admin:index' %}">Admin panel</a>
+        {% endif %}
+        <a href="{% url 'users:logoutUser' %}">{{ user.username }} : Logout</a>
+        {% endif %}
+    </nav>
+</header>
+<!--home section design-->
+<section class="home" id="home">
+  <div class="home-content">
+      <h3>Hello, it's me!</h3>
+      <h1>Ravil Assimov</h1>
+      <h3>And i'm a <span class="multiple-text"></span></h3>
+      <p>Created mobile applications Quiz, BMI Calculator, Clima. In the Quiz application, I compiled answers to questions from various fields of knowledge. BMI Calculator used BMI(Body Mass Index) system, you can find out if your BMI is good. Clima studies the weather in different cities.</p>
+      <div class="social-media">
+          <a href="https://t.me/asimovravil"><i class='bx bxl-telegram' ></i></a>
+          <a href="https://github.com/asimovravil"><i class='bx bxl-github' ></i></a>
+          <a href="https://www.instagram.com/asimovravil_i/"><i class='bx bxl-instagram-alt' ></i></a>
+          <a href="https://www.vk.com/asimovravil"><i class='bx bxl-vk' ></i></a>
+      </div>
+      <a href="{% url 'catalog:store_home' %}" class="btn">View products</a>
+  </div>
+
+  <div class="home-img">
+      <img src="{% static './images/home.webp' %}" alt="">
+  </div>
+</section>
+{% endblock %}
